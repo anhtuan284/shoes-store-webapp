@@ -27,6 +27,7 @@ namespace QLBG.DAL.Models
         public virtual DbSet<ShoeTag> ShoeTags { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -81,7 +82,9 @@ namespace QLBG.DAL.Models
             {
                 entity.ToTable("Customer");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Address)
                     .HasMaxLength(50)
@@ -96,6 +99,12 @@ namespace QLBG.DAL.Models
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)
                     .HasColumnName("name");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Customer)
+                    .HasForeignKey<Customer>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Customer_user");
             });
 
             modelBuilder.Entity<Order>(entity =>
@@ -251,6 +260,30 @@ namespace QLBG.DAL.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("user");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("password");
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(10)
+                    .HasColumnName("role")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("username");
             });
 
             OnModelCreatingPartial(modelBuilder);

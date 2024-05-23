@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
@@ -39,7 +40,7 @@ namespace QLBG.WEB.Controllers
             return Ok(res);
         }
 
-        [HttpGet("get-all")]
+        [HttpGet("get-all"), Authorize]
         public IActionResult getAllCategories()
         {
             var res = new SingleRsp();

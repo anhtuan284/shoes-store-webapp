@@ -18,6 +18,7 @@ namespace QLBG.DAL.Models
         public byte? Gender { get; set; }
         public string Address { get; set; }
 
+        public virtual User IdNavigation { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }
 }
