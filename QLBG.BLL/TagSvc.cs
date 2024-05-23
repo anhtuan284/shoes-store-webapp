@@ -23,5 +23,6 @@ namespace QLBG.BLL
             res = tagRep.CreateTag(tag);
             return res;
         }
+
     }
 }

@@ -17,11 +17,21 @@ namespace QLBG.BLL
 
         public SingleRsp CreateShoe(ShoeReq shoeReq)
         {
-            var res = new SingleRsp();
-            Shoe shoe = new Shoe();
-            shoe.Name = shoeReq.Name;
-            shoe.CategoryId = shoeReq.CategoryId;
-            res = shoeRep.CreateShoe(shoe);
+            var res = shoeRep.CreateShoe(shoeReq);
+            return res;
+        }
+
+        public SingleRsp AddSize(ShoeReq shoeReq)
+        {
+            var res = shoeRep.AddSize(shoeReq);
+            return res;
+        }
+
+        public SingleRsp SearchShoes(SearchShoesReq req)
+        {
+            SingleRsp res = new ();
+            res.Data = _rep.SearchShoes(req);
+
             return res;
         }
     }

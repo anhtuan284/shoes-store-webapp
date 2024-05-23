@@ -39,7 +39,7 @@ namespace QLBG.BLL
             var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Description);
             if (m1 == null)
             {
-                res.SetError("EZ103", "No data.");
+                res.SetError("EZ103", "No category.");
             }
             else
             {

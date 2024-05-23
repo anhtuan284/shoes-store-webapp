@@ -158,6 +158,12 @@ namespace QLBG.DAL.Models
                     .HasForeignKey(d => d.OrderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_OrderDetail_Order");
+
+                entity.HasOne(d => d.ShoeDetail)
+                    .WithMany(p => p.OrderDetails)
+                    .HasForeignKey(d => d.ShoeDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderDetail_ShoeDetail");
             });
 
             modelBuilder.Entity<Shoe>(entity =>
@@ -180,26 +186,15 @@ namespace QLBG.DAL.Models
 
             modelBuilder.Entity<ShoeDetail>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.ShoeId, e.SizeId })
-                    .HasName("PK_Shoe_Size");
-
                 entity.ToTable("ShoeDetail");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
 
                 entity.Property(e => e.ShoeId).HasColumnName("shoe_id");
 
                 entity.Property(e => e.SizeId).HasColumnName("size_id");
-
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithMany(p => p.ShoeDetails)
-                    .HasForeignKey(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ShoeDetail_OrderDetail");
 
                 entity.HasOne(d => d.Shoe)
                     .WithMany(p => p.ShoeDetails)
@@ -270,7 +265,6 @@ namespace QLBG.DAL.Models
 
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("password");
 
@@ -287,6 +281,11 @@ namespace QLBG.DAL.Models
             });
 
             OnModelCreatingPartial(modelBuilder);
+        }
+
+        internal void SaveChanges(ShoeDetail s)
+        {
+            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

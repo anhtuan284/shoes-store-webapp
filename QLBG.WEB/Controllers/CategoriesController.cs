@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
@@ -19,32 +20,37 @@ namespace QLBG.WEB.Controllers
             categorySvc = new CategorySvc();
         }
 
+        // api/Categories/create
         [HttpPost("create")]
         public IActionResult createCategory([FromBody] CategoryReq req)
         {
-            var res = new SingleRsp();
+            Category c = new()
+            {
+                Name = req.Name,
+                Description = req.Description
+            };
 
-            Category c = new Category();
-            c.Name = req.Name;
-            c.Description = req.Description;
+            var res = categorySvc.Create(c);
 
-            res = categorySvc.Create(c);
-            return Created("cc",res);
+            return Created(new Uri(Request.GetEncodedUrl()),res);
         }
 
-        [HttpPost("get-by-id")]
-        public IActionResult getCategoryById([FromBody] SimpleReq req)
+        // api/Categories/{id}
+        [HttpGet("{id}")]
+        public IActionResult getCategoryById([FromRoute] int id)
         {
-            var res = new SingleRsp();
-            res = categorySvc.Read(req.Id);
+            var res = categorySvc.Read(id);
+
             return Ok(res);
         }
 
-        [HttpGet("get-all"), Authorize]
+        // api/Categories/all
+        [HttpGet("all")]
         public IActionResult getAllCategories()
         {
             var res = new SingleRsp();
             res.Data = categorySvc.All;
+
             return Ok(res);
         }
     }
