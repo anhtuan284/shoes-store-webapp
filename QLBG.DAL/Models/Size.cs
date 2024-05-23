@@ -13,7 +13,7 @@ namespace QLBG.DAL.Models
         }
 
         public int Id { get; set; }
-        public int Size { get; set; }
+        public int Size1 { get; set; }
 
         public virtual ICollection<ShoeDetail> ShoeDetails { get; set; }
     }

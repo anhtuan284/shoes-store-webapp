@@ -238,7 +238,7 @@ namespace QLBG.DAL.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Size).HasColumnName("size");
+                entity.Property(e => e.Size1).HasColumnName("size");
             });
 
             modelBuilder.Entity<Tag>(entity =>
