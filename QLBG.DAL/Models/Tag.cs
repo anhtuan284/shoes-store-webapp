@@ -5,17 +5,16 @@ using System.Collections.Generic;
 
 namespace QLBG.DAL.Models
 {
-    public partial class Category
+    public partial class Tag
     {
-        public Category()
+        public Tag()
         {
-            Shoes = new HashSet<Shoe>();
+            ShoeTags = new HashSet<ShoeTag>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
 
-        public virtual ICollection<Shoe> Shoes { get; set; }
+        public virtual ICollection<ShoeTag> ShoeTags { get; set; }
     }
 }
