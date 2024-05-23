@@ -3,23 +3,34 @@ using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using QLBG.DAL;
+using QLBG.DAL.Models;
 
-namespace QLBG.Web.Controllers
+namespace QLBG.WEB.Controllers
 {
-    
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly CategorySvc categorySvc;
-        public CategoryController()
+        public CategoriesController()
         {
             categorySvc = new CategorySvc();
         }
+
+        [HttpPost("create")]
+        public IActionResult createCategory([FromBody] CategoryReq req)
+        {
+            var res = new SingleRsp();
+
+            Category c = new Category();
+            c.Name = req.Name;
+            c.Description = req.Description;
+
+            res = categorySvc.Create(c);
+            return Created("cc",res);
+        }
+
         [HttpPost("get-by-id")]
         public IActionResult getCategoryById([FromBody] SimpleReq req)
         {
@@ -27,7 +38,8 @@ namespace QLBG.Web.Controllers
             res = categorySvc.Read(req.Id);
             return Ok(res);
         }
-        [HttpPost("get-all")]
+
+        [HttpGet("get-all")]
         public IActionResult getAllCategories()
         {
             var res = new SingleRsp();

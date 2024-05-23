@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 
 namespace QLBG.BLL
 {
-    public class CategorySvc : GenericSvc<CategoryRep, Category>
+    public class SizeSvc : GenericSvc<SizeRep, Size>
     {
         #region -- Overrides --
-
 
         public override SingleRsp Read(int id)
         {
@@ -22,21 +21,20 @@ namespace QLBG.BLL
             {
                 var m = _rep.Read(id);
                 res.Data = m;
-                    
-            }catch (Exception ex)
+            }
+            catch 
             {
                 res.SetError("400", "Bad request");
             }
-
             return res;
         }
 
 
-        public override SingleRsp Update(Category m)
+        public override SingleRsp Update(Size m)
         {
             var res = new SingleRsp();
 
-            var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Description);
+            var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Size);
             if (m1 == null)
             {
                 res.SetError("EZ103", "No data.");
@@ -53,7 +51,7 @@ namespace QLBG.BLL
 
         #region -- Methods --
 
-        public CategorySvc() { }
+        public SizeSvc() { }
 
 
         #endregion
