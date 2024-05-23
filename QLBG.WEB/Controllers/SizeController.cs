@@ -12,15 +12,16 @@ namespace QLBG.WEB.Controllers
     [ApiController]
     public class SizeController : ControllerBase
     {
+        SizeSvc sizeSvc = new SizeSvc();
         [HttpPost("create")]
         public IActionResult createCategory([FromBody] SizeReq req)
         {
             var res = new SingleRsp();
 
             Size c = new Size();
-            c.Size = req.Size;
+            c.Size1 = req.Size;
 
-            //res = SizeSvc.Create(c);
+            res = sizeSvc.Create(c);
             return Created("cc", res);
         }
     }

@@ -34,7 +34,7 @@ namespace QLBG.BLL
         {
             var res = new SingleRsp();
 
-            var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Size);
+            var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Size1);
             if (m1 == null)
             {
                 res.SetError("EZ103", "No data.");
