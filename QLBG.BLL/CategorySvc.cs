@@ -49,6 +49,13 @@ namespace QLBG.BLL
 
             return res;
         }
+
+        public override SingleRsp Delete(int id)
+        {
+            var res = new SingleRsp();
+            res.Data = _rep.Remove(id);
+            return res;
+        }
         #endregion
 
         #region -- Methods --

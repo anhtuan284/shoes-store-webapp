@@ -15,15 +15,32 @@ namespace QLBG.BLL
     {
         ShoeRep shoeRep = new ShoeRep();
 
+        public override SingleRsp Read(int id)
+        {
+            var res = new SingleRsp();
+            try
+            {
+                var m = _rep.Read(id);
+                res.Data = m;
+
+            }
+            catch (Exception ex)
+            {
+                res.SetError("400", "Bad request");
+            }
+
+            return res;
+        }
+
         public SingleRsp CreateShoe(ShoeReq shoeReq)
         {
             var res = shoeRep.CreateShoe(shoeReq);
             return res;
         }
 
-        public SingleRsp AddSize(ShoeReq shoeReq)
+        public SingleRsp Edit(ShoeReq shoeReq)
         {
-            var res = shoeRep.AddSize(shoeReq);
+            var res = shoeRep.Edit(shoeReq);
             return res;
         }
 

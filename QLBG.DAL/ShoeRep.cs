@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using QLBG.Common.DAL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
@@ -14,51 +15,105 @@ namespace QLBG.DAL
 {
     public class ShoeRep : GenericRep<manage_sale_shoesContext, Shoe>
     {
+        public override Shoe Read(int id)
+        {
+            var m = base.All.First(x => x.Id == id);
+            return m;
+        }
+
         //Add new Shoes with CategoryId
         public SingleRsp CreateShoe(ShoeReq shoeReq)
         {
-            var res = new SingleRsp();
-            using (manage_sale_shoesContext context = new manage_sale_shoesContext())
+            using (var ctx = new manage_sale_shoesContext())
+            using (var trans = ctx.Database.BeginTransaction())
             {
+                var res = new SingleRsp();
                 try
                 {
-                    var newShoe = new Shoe { Name = shoeReq.Name, CategoryId = shoeReq.CategoryId };
-                    context.Shoes.Add(newShoe);
-                    context.SaveChanges();
+                    if (shoeReq.Name == null || shoeReq.CategoryId == null)
+                    {
+                        throw new Exception("Missing input field");
+                    }
+                    var newShoe = new Shoe { Name = shoeReq.Name, CategoryId = (int)shoeReq.CategoryId };
+                    ctx.Shoes.Add(newShoe);
+                    ctx.SaveChanges();
+
+                    var shoeDetails = shoeReq.sizeDetail.Select(detail => new ShoeDetail
+                    {
+                        ShoeId = newShoe.Id,
+                        SizeId = detail.SizeId,
+                        Quantity = detail.Quantity,
+                    });
+
+                    ctx.ShoeDetails.AddRange(shoeDetails);
+                    ctx.SaveChanges();
+                    res.Data = newShoe;
+                    trans.Commit();
                 }
                 catch (Exception ex)
                 {
-                    res = new SingleRsp();
                     res.SetError(ex.Message);
+                    trans.Rollback();
                 }
                 return res;
             }
         }
 
+
+        private void UpdatePropertyIfNotNull<T>(T value, Action updateAction)
+        {
+            if (value != null)
+                updateAction();
+        }
+
         // Add Sizes to Shoe
-        public SingleRsp AddSize(ShoeReq shoeReq)
+        public SingleRsp Edit(ShoeReq shoeReq)
         {
             var res = new SingleRsp();
-            using (manage_sale_shoesContext context = new manage_sale_shoesContext())
+            using (var context = new manage_sale_shoesContext())
+            using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var newShoe = new Shoe { Name = shoeReq.Name, CategoryId = shoeReq.CategoryId };
-                    context.Shoes.Add(newShoe);
-                    context.SaveChanges();
-                    var shoeDetails = shoeReq.SizeId.Select(sizeId => new ShoeDetail
+                    var currentShoe = context.Shoes.FirstOrDefault(s => s.Id == shoeReq.ShoeID);
+                    if (currentShoe == null)
                     {
-                        ShoeId = newShoe.Id,
-                        SizeId = sizeId,
-                        Quantity = 1
-                    });
+                        res.SetError("Shoe not found.");
+                        return res;
+                    }
+                    UpdatePropertyIfNotNull(shoeReq.Name, () => currentShoe.Name = shoeReq.Name);
+                    UpdatePropertyIfNotNull(shoeReq.CategoryId, () => currentShoe.CategoryId = (int)shoeReq.CategoryId);
 
-                    context.ShoeDetails.AddRange(shoeDetails);
+                    if (shoeReq.sizeDetail != null && shoeReq.sizeDetail.Any())
+                    {
+                        foreach (var detail in shoeReq.sizeDetail)
+                        {
+                            var existingShoeDetail = context.ShoeDetails
+                                .FirstOrDefault(sd => sd.ShoeId == currentShoe.Id && sd.SizeId == detail.SizeId);
+
+                            if (existingShoeDetail != null)
+                            {
+                                existingShoeDetail.Quantity = detail.Quantity;
+                            }
+                            else
+                            {
+                                var newShoeDetail = new ShoeDetail
+                                {
+                                    ShoeId = currentShoe.Id,
+                                    SizeId = detail.SizeId,
+                                    Quantity = detail.Quantity
+                                };
+                                context.ShoeDetails.Add(newShoeDetail);
+                            }
+                        }
+                    }
                     context.SaveChanges();
+                    res.SetMessage("Change shoes info successfully !");
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
-                    res = new SingleRsp();
+                    transaction.Rollback();
                     res.SetError(ex.Message);
                 }
             }
@@ -73,14 +128,10 @@ namespace QLBG.DAL
                 var query = ctx.Shoes.AsQueryable();
 
                 if (!string.IsNullOrEmpty(req.Keyword))
-                {
                     query = query.Where(x => x.Name.Contains(req.Keyword));
-                }
 
                 if (req.CategoryId.HasValue)
-                {
                     query = query.Where(x => x.CategoryId == req.CategoryId.Value);
-                }
 
                 // Pagination
                 if (req.Page.HasValue && req.Size.HasValue)

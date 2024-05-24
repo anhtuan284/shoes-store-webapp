@@ -40,7 +40,14 @@ namespace QLBG.WEB.Controllers
         public IActionResult getCategoryById([FromRoute] int id)
         {
             var res = categorySvc.Read(id);
+            return Ok(res);
+        }
 
+        // api/Categories/{id}
+        [HttpDelete("{id}")]
+        public IActionResult deleteCategory([FromRoute] int id)
+        {
+            var res = categorySvc.Delete(id);
             return Ok(res);
         }
 

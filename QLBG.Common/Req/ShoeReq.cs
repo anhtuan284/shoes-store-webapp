@@ -8,11 +8,10 @@ namespace QLBG.Common.Req
 {
     public class ShoeReq
     {
-        public string Name { get; set; }
-        public int CategoryId { get; set; }
+        public int? ShoeID { get; set; }
+        public string? Name { get; set; }
+        public int? CategoryId { get; set; }
+        public required List<SizeDetailReq> sizeDetail { get; set;}
 
-        public string price { get; set; }
-
-        public HashSet<int>? SizeId { get; set;}
     }
 }

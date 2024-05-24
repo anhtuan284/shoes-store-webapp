@@ -18,18 +18,25 @@ namespace QLBG.WEB.Controllers
             return Created(new Uri(Request.GetEncodedUrl()), res);
         }
 
-        [HttpPost("add_size")]
-        public IActionResult AddSize([FromBody] ShoeReq shoeReq)
+        [HttpGet("{id}")]
+        public IActionResult ViewSingleShoe([FromRoute] int id)
         {
-            var res = shoeSvc.AddSize(shoeReq);
+            var res = shoeSvc.Read(id);
+            return Ok(res);
+        }
+
+        [HttpPut("edit")]
+        public IActionResult Edit([FromBody] ShoeReq shoeReq)
+        {
+            var res = shoeSvc.Edit(shoeReq);
             return Created(new Uri(Request.GetEncodedUrl()), res);
         }
 
-        [HttpPost("search")]
-        public IActionResult Search([FromBody] SearchShoesReq req)
+        [HttpGet]
+        public IActionResult Search([FromQuery] SearchShoesReq req)
         {
             var res = shoeSvc.SearchShoes(req);
-            return Created(new Uri(Request.GetEncodedUrl()), res);
+            return Ok(res);
         }
     }
 }
