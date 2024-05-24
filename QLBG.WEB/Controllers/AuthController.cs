@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QLBG.BLL;
 using QLBG.Common.Req;
@@ -14,10 +15,12 @@ namespace QLBG.WEB.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         { 
             this._configuration = configuration;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         UserSvc userSvc = new UserSvc();
@@ -38,6 +41,19 @@ namespace QLBG.WEB.Controllers
             }
             string token = CreateToken(user);
             return Ok(token);
+        }
+
+        [HttpGet("current_user"), Authorize]
+        public IActionResult CurrentUser()
+        {
+            User user = null;
+            var result = string.Empty;
+            if (_httpContextAccessor.HttpContext is not null)
+            {
+                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            }
+            user = userSvc.GetUserByName(result);
+            return Ok(user);
         }
 
         private string CreateToken(User user)

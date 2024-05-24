@@ -143,6 +143,8 @@ namespace QLBG.DAL.Models
                     .ValueGeneratedOnAdd()
                     .HasColumnName("id");
 
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
 
                 entity.Property(e => e.ShoeDetailId).HasColumnName("shoe_detail_id");
@@ -172,10 +174,18 @@ namespace QLBG.DAL.Models
 
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
 
+                entity.Property(e => e.Image)
+                    .HasMaxLength(50)
+                    .HasColumnName("image");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("name");
+
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(18, 0)")
+                    .HasColumnName("price");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Shoes)
@@ -281,11 +291,6 @@ namespace QLBG.DAL.Models
             });
 
             OnModelCreatingPartial(modelBuilder);
-        }
-
-        internal void SaveChanges(ShoeDetail s)
-        {
-            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

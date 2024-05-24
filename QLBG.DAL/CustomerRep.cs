@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace QLBG.DAL
 {
-    public class UserRep : GenericRep<manage_sale_shoesContext,User>
+    public class CustomerRep : GenericRep<manage_sale_shoesContext, Customer>
     {
-        public SingleRsp CreateUser(User user)
+        public SingleRsp CreateCustomer(Customer c)
         {
             var res = new SingleRsp();
             using (manage_sale_shoesContext context = new manage_sale_shoesContext())
             {
                 try
                 {
-                    var p = context.Users.Add(user);
+                    var p = context.Customers.Add(c);
                     context.SaveChanges();
                 }
                 catch (Exception ex)
@@ -29,21 +29,10 @@ namespace QLBG.DAL
             }
             return res;
         }
-        public User Login(String name)
+        public override Customer Read(int id)
         {
-            try
-            {
-                return base.All.First(x => x.Username == name);
-            }
-            catch(Exception)
-            {
-                return null;
-            }
-        }
-        public User GetUserByName(String name)
-        {
-            User user = base.All.First(x => x.Username == name);
-            return user;
+            var m = base.All.First(x => x.Id == id);
+            return m;
         }
     }
 }

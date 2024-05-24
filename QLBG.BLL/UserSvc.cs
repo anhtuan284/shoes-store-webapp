@@ -15,6 +15,8 @@ namespace QLBG.BLL
     public class UserSvc : GenericSvc<UserRep,User>
     {
         UserRep userRep = new UserRep();
+        CustomerRep customerRep = new CustomerRep();
+
 
         public SingleRsp CreateUser(UserReq userReq)
         {
@@ -24,6 +26,16 @@ namespace QLBG.BLL
             user.Password = BCrypt.Net.BCrypt.HashPassword(userReq.Password);
             user.Role = "customer";
             res = userRep.CreateUser(user);
+            if (res.Success == true ) 
+            {
+                Customer customer = new Customer();
+                customer.Address = userReq.Address;
+                customer.Id = user.Id;
+                customer.Name = userReq.Name;
+                customer.Birthday = userReq.Birthday;
+                customer.Gender = userReq.Gender;
+                res = customerRep.CreateCustomer(customer);
+            }
             return res;
         }
         public User Login(LoginReq login)
@@ -38,5 +50,15 @@ namespace QLBG.BLL
             }
             return null;
         }
+        public User GetUserByName(String name)
+        {
+            User user = userRep.GetUserByName(name);
+            user.Password = null;
+            user.Customer = customerRep.Read(user.Id);
+            return user;
+        }
+
+        
+        
     }
 }

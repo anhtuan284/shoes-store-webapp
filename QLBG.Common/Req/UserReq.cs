@@ -12,6 +12,7 @@ namespace QLBG.Common.Req
         public string Password { get; set; }
         public string Name { get; set; }
         public DateTime? Birthday { get; set; }
+
         public byte? Gender { get; set; }
         public string Address { get; set; }
     }
