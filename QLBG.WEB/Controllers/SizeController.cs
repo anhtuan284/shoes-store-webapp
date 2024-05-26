@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
@@ -8,7 +9,7 @@ using QLBG.DAL.Models;
 
 namespace QLBG.WEB.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]"), Authorize(Roles = "admin")]
     [ApiController]
     public class SizeController : ControllerBase
     {
@@ -22,7 +23,7 @@ namespace QLBG.WEB.Controllers
             c.Size1 = req.Size;
 
             res = sizeSvc.Create(c);
-            return Created("cc", res);
+            return Created("200", res);
         }
     }
 }
