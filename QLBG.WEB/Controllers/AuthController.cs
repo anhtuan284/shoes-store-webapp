@@ -46,13 +46,12 @@ namespace QLBG.WEB.Controllers
         [HttpGet("current_user"), Authorize]
         public IActionResult CurrentUser()
         {
-            User user = null;
             var result = string.Empty;
             if (_httpContextAccessor.HttpContext is not null)
             {
                 result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
             }
-            user = userSvc.GetUserByName(result);
+            User user = userSvc.GetUserByName(result);
             return Ok(user);
         }
 

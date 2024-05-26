@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace QLBG.Web
@@ -31,7 +32,10 @@ namespace QLBG.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
             services.AddEndpointsApiExplorer();
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
@@ -47,12 +51,13 @@ namespace QLBG.Web
                             Configuration.GetSection("AppSettings:Token").Value!))
                 };
             });
-            var cloudinaryAccount = new Account(
+            
+            Cloudinary cloudinary = new Cloudinary(new Account(
                 Configuration["Cloudinary:CloudName"],
                 Configuration["Cloudinary:ApiKey"],
                 Configuration["Cloudinary:ApiSecret"]
-            );
-            Cloudinary cloudinary = new Cloudinary(cloudinaryAccount);
+          ));
+            //cloudinary.Api.Secure = true;
             services.AddSingleton(cloudinary);
             #region -- Swagger --  
             var inf1 = new OpenApiInfo

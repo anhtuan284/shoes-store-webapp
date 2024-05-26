@@ -1,21 +1,47 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
+using QLBG.Common.Rsp;
+using QLBG.DAL;
 
 namespace QLBG.WEB.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class ShoeController : Controller
     {
-        ShoeSvc shoeSvc = new();
-        [HttpPost("create")]
-        public IActionResult CreateTag([FromBody] ShoeReq shoeReq)
+        private readonly Cloudinary _cloudinary;
+
+        public ShoeController(Cloudinary cloudinary)
         {
-            var res = shoeSvc.CreateShoe(shoeReq);
-            return Created(new Uri(Request.GetEncodedUrl()), res);
+            _cloudinary = cloudinary;
+        }
+        ShoeSvc shoeSvc = new ShoeSvc();
+
+        [HttpPost("create")]
+        [Consumes("multipart/form-data")]
+        public IActionResult CreateShoe([FromForm] ShoeReq shoeReq)
+        {
+            var res = new SingleRsp();
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(shoeReq.Img.FileName, shoeReq.Img.OpenReadStream()),
+
+            };
+            var uploadResult = _cloudinary.Upload(uploadParams);
+
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                res = shoeSvc.CreateShoe(shoeReq, uploadResult.Url);
+                return Created(new Uri(Request.GetEncodedUrl()), res);
+            }
+            res.SetMessage("Image not found");
+            return BadRequest(res);
         }
 
         [HttpGet("{id}")]

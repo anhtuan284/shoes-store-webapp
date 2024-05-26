@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace QLBG.Common.Req
 {
-    public class TagReq
+    public class CommentReq
     {
-        public string Name { get; set; }
+        public int Rate { get; set; }
+        public string Comment1 { get; set; }
     }
 }

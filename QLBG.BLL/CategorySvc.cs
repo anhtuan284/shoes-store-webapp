@@ -23,7 +23,7 @@ namespace QLBG.BLL
                 var m = _rep.Read(id);
                 res.Data = m;
                     
-            }catch (Exception ex)
+            }catch (Exception)
             {
                 res.SetError("400", "Bad request");
             }

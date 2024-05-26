@@ -24,9 +24,7 @@ namespace QLBG.DAL.Models
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<Shoe> Shoes { get; set; }
         public virtual DbSet<ShoeDetail> ShoeDetails { get; set; }
-        public virtual DbSet<ShoeTag> ShoeTags { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -63,7 +61,9 @@ namespace QLBG.DAL.Models
             {
                 entity.ToTable("Comment");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Comment1)
                     .IsRequired()
@@ -76,6 +76,12 @@ namespace QLBG.DAL.Models
                     .HasColumnName("created_date");
 
                 entity.Property(e => e.Rate).HasColumnName("rate");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Comment)
+                    .HasForeignKey<Comment>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Comment_OrderDetail");
             });
 
             modelBuilder.Entity<Customer>(entity =>
@@ -139,21 +145,16 @@ namespace QLBG.DAL.Models
             {
                 entity.ToTable("OrderDetail");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("id");
+                entity.HasIndex(e => new { e.OrderId, e.ShoeDetailId }, "IX_OrderDetail")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Amount).HasColumnName("amount");
 
                 entity.Property(e => e.OrderId).HasColumnName("order_id");
 
                 entity.Property(e => e.ShoeDetailId).HasColumnName("shoe_detail_id");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.OrderDetail)
-                    .HasForeignKey<OrderDetail>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_OrderDetail_Comment");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderDetails)
@@ -175,7 +176,7 @@ namespace QLBG.DAL.Models
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
 
                 entity.Property(e => e.Image)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .HasColumnName("image");
 
                 entity.Property(e => e.Name)
@@ -198,6 +199,9 @@ namespace QLBG.DAL.Models
             {
                 entity.ToTable("ShoeDetail");
 
+                entity.HasIndex(e => new { e.ShoeId, e.SizeId }, "IX_ShoeDetail")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
@@ -219,33 +223,6 @@ namespace QLBG.DAL.Models
                     .HasConstraintName("FK_Shoe_Size_Size");
             });
 
-            modelBuilder.Entity<ShoeTag>(entity =>
-            {
-                entity.HasKey(e => new { e.Id, e.ShoeId, e.TagId });
-
-                entity.ToTable("Shoe_tag");
-
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("id");
-
-                entity.Property(e => e.ShoeId).HasColumnName("shoe_id");
-
-                entity.Property(e => e.TagId).HasColumnName("tag_id");
-
-                entity.HasOne(d => d.Shoe)
-                    .WithMany(p => p.ShoeTags)
-                    .HasForeignKey(d => d.ShoeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Shoe_tag_Shoes");
-
-                entity.HasOne(d => d.Tag)
-                    .WithMany(p => p.ShoeTags)
-                    .HasForeignKey(d => d.TagId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Shoe_tag_Tag");
-            });
-
             modelBuilder.Entity<Size>(entity =>
             {
                 entity.ToTable("Size");
@@ -255,21 +232,12 @@ namespace QLBG.DAL.Models
                 entity.Property(e => e.Size1).HasColumnName("size");
             });
 
-            modelBuilder.Entity<Tag>(entity =>
-            {
-                entity.ToTable("Tag");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-            });
-
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("user");
+
+                entity.HasIndex(e => e.Username, "IX_user")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -279,9 +247,8 @@ namespace QLBG.DAL.Models
                     .HasColumnName("password");
 
                 entity.Property(e => e.Role)
-                    .HasMaxLength(10)
-                    .HasColumnName("role")
-                    .IsFixedLength(true);
+                    .HasMaxLength(50)
+                    .HasColumnName("role");
 
                 entity.Property(e => e.Username)
                     .IsRequired()

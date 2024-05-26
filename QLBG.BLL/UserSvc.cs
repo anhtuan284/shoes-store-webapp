@@ -53,7 +53,6 @@ namespace QLBG.BLL
         public User GetUserByName(String name)
         {
             User user = userRep.GetUserByName(name);
-            user.Password = null;
             user.Customer = customerRep.Read(user.Id);
             return user;
         }

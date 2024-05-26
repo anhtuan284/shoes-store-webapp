@@ -22,7 +22,7 @@ namespace QLBG.DAL
         }
 
         //Add new Shoes with CategoryId
-        public SingleRsp CreateShoe(ShoeReq shoeReq)
+        public SingleRsp CreateShoe(ShoeReq shoeReq,Uri url)
         {
             using (var ctx = new manage_sale_shoesContext())
             using (var trans = ctx.Database.BeginTransaction())
@@ -34,7 +34,7 @@ namespace QLBG.DAL
                     {
                         throw new Exception("Missing input field");
                     }
-                    var newShoe = new Shoe { Name = shoeReq.Name, CategoryId = (int)shoeReq.CategoryId };
+                    var newShoe = new Shoe { Name = shoeReq.Name, CategoryId = (int)shoeReq.CategoryId,Price = shoeReq.Price, Image = url.ToString() };
                     ctx.Shoes.Add(newShoe);
                     ctx.SaveChanges();
 

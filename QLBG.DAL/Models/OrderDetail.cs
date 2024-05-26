@@ -12,8 +12,8 @@ namespace QLBG.DAL.Models
         public int OrderId { get; set; }
         public int Amount { get; set; }
 
-        public virtual Comment IdNavigation { get; set; }
         public virtual Order Order { get; set; }
         public virtual ShoeDetail ShoeDetail { get; set; }
+        public virtual Comment Comment { get; set; }
     }
 }

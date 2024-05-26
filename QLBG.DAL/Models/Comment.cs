@@ -12,6 +12,6 @@ namespace QLBG.DAL.Models
         public string Comment1 { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        public virtual OrderDetail OrderDetail { get; set; }
+        public virtual OrderDetail IdNavigation { get; set; }
     }
 }

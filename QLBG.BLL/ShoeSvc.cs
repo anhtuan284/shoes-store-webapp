@@ -1,4 +1,6 @@
-﻿using QLBG.Common.BLL;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using QLBG.Common.BLL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
 using QLBG.DAL;
@@ -12,9 +14,8 @@ using System.Threading.Tasks;
 namespace QLBG.BLL
 {
     public class ShoeSvc : GenericSvc<ShoeRep,Shoe>
-    {
+    {   
         ShoeRep shoeRep = new ShoeRep();
-
         public override SingleRsp Read(int id)
         {
             var res = new SingleRsp();
@@ -24,7 +25,7 @@ namespace QLBG.BLL
                 res.Data = m;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 res.SetError("400", "Bad request");
             }
@@ -32,9 +33,9 @@ namespace QLBG.BLL
             return res;
         }
 
-        public SingleRsp CreateShoe(ShoeReq shoeReq)
+        public SingleRsp CreateShoe(ShoeReq shoeReq,Uri url)
         {
-            var res = shoeRep.CreateShoe(shoeReq);
+            var res = shoeRep.CreateShoe(shoeReq, url);
             return res;
         }
 
