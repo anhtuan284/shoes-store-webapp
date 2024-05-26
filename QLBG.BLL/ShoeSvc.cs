@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace QLBG.BLL
 {
-    public class ShoeSvc : GenericSvc<ShoeRep,Shoe>
-    {   
+    public class ShoeSvc : GenericSvc<ShoeRep, Shoe>
+    {
         ShoeRep shoeRep = new ShoeRep();
         public override SingleRsp Read(int id)
         {
@@ -47,9 +47,7 @@ namespace QLBG.BLL
 
         public SingleRsp SearchShoes(SearchShoesReq req)
         {
-            SingleRsp res = new ();
-            res.Data = _rep.SearchShoes(req);
-
+            var res = _rep.SearchShoes(req);
             return res;
         }
     }

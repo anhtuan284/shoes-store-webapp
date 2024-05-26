@@ -17,7 +17,9 @@ namespace QLBG.DAL
     {
         public override Shoe Read(int id)
         {
-            var m = base.All.First(x => x.Id == id);
+            //var m = base.All.First(x => x.Id == id);
+            var m = base.All.AsQueryable().Where(x => x.Id == id).Include(x => x.ShoeDetails)
+                .ThenInclude(d => d.Size).First();
             return m;
         }
 
@@ -121,8 +123,9 @@ namespace QLBG.DAL
         }
 
         // Search
-        public List<Shoe> SearchShoes(SearchShoesReq req)
+        public ProductRsp SearchShoes(SearchShoesReq req)
         {
+            var res = new ProductRsp();
             using (manage_sale_shoesContext ctx = new())
             {
                 var query = ctx.Shoes.AsQueryable();
@@ -133,6 +136,8 @@ namespace QLBG.DAL
                 if (req.CategoryId.HasValue)
                     query = query.Where(x => x.CategoryId == req.CategoryId.Value);
 
+                res.Count = query.Count();
+
                 // Pagination
                 if (req.Page.HasValue && req.Size.HasValue)
                 {
@@ -140,9 +145,9 @@ namespace QLBG.DAL
                     query = query.Skip(skip).Take(req.Size.Value);
                 }
 
-                return query.ToList();
-
+                res.Data = query.ToList();
             }
+            return res;
         }
 
     }

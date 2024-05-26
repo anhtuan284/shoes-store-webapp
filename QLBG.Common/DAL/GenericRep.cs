@@ -123,6 +123,7 @@ namespace QLBG.Common.DAL
         protected T Delete(T m)
         {
             var t = _context.Set<T>().Remove(m);
+            _context.SaveChanges();
             return t.Entity;
         }
 
