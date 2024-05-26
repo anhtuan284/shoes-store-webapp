@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
@@ -21,7 +22,7 @@ namespace QLBG.WEB.Controllers
         {
             _httpContextAccessor = new HttpContextAccessor();
         }
-        [HttpPost("create")]
+        [HttpPost("create"), Authorize]
         public IActionResult CreateOrder([FromBody] OrderReq orderReq)
         {
             var result = string.Empty;
@@ -33,7 +34,7 @@ namespace QLBG.WEB.Controllers
             SingleRsp? res = orderSvc.CreateOrder(orderReq, user.Id);
             return res.Success?Ok(res):BadRequest(res);
         }
-        [HttpGet("get")]
+        [HttpGet("get"), Authorize]
         public IActionResult Get()
         {
             var result = string.Empty;
@@ -47,7 +48,7 @@ namespace QLBG.WEB.Controllers
             return Ok(res);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "admin")]
         public IActionResult Update([FromRoute] int id)
         {
             var res = new SingleRsp();

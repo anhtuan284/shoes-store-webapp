@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QLBG.BLL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
@@ -19,7 +20,7 @@ namespace QLBG.WEB.Controllers
             _httpContextAccessor = new HttpContextAccessor();
         }
 
-        [HttpPost("Add/{id}")]
+        [HttpPost("Add/{id}"), Authorize]
         public IActionResult AddComment([FromBody] CommentReq commentReq, [FromRoute] int id)
         {
             var res = commentSvc.AddComment(commentReq, id);

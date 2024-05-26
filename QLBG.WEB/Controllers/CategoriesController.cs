@@ -21,7 +21,7 @@ namespace QLBG.WEB.Controllers
         }
 
         // api/Categories/create
-        [HttpPost("create")]
+        [HttpPost("create"), Authorize(Roles = "admin")]
         public IActionResult createCategory([FromBody] CategoryReq req)
         {
             Category c = new()
@@ -44,7 +44,7 @@ namespace QLBG.WEB.Controllers
         }
 
         // api/Categories/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "admin")]
         public IActionResult deleteCategory([FromRoute] int id)
         {
             categorySvc.Delete(id);

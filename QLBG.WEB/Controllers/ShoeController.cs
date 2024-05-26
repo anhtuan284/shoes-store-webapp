@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using QLBG.BLL;
 using QLBG.Common.Req;
 using QLBG.Common.Rsp;
 using QLBG.DAL;
+using System.Data;
 
 namespace QLBG.WEB.Controllers
 {
@@ -23,7 +25,7 @@ namespace QLBG.WEB.Controllers
         }
         ShoeSvc shoeSvc = new ShoeSvc();
 
-        [HttpPost("create")]
+        [HttpPost("create"), Authorize(Roles = "admin")]
         [Consumes("multipart/form-data")]
         public IActionResult CreateShoe([FromForm] ShoeReq shoeReq)
         {
@@ -51,7 +53,7 @@ namespace QLBG.WEB.Controllers
             return Ok(res);
         }
 
-        [HttpPut("edit")]
+        [HttpPut("edit"), Authorize(Roles = "admin")]
         public IActionResult Edit([FromBody] ShoeReq shoeReq)
         {
             var res = shoeSvc.Edit(shoeReq);
