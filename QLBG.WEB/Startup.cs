@@ -10,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QLBG.BLL;
+using QLBG.WEB;
+using QLBG.WEB.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +62,7 @@ namespace QLBG.Web
           ));
             //cloudinary.Api.Secure = true;
             services.AddSingleton(cloudinary);
+            services.AddSingleton<IVnPaySvc, VnPaySvc>();
             #region -- Swagger --  
             var inf1 = new OpenApiInfo
             {

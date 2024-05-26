@@ -36,10 +36,10 @@ namespace QLBG.WEB.Controllers
         }
 
         // api/Categories/{id}
-        [HttpGet("{id}")]
-        public IActionResult getCategoryById([FromRoute] int id)
+        [HttpPut("{id}")]
+        public IActionResult getCategoryById([FromRoute] int id, [FromBody] CategoryReq req)
         {
-            var res = categorySvc.Read(id);
+            var res = categorySvc.Update(id, req);
             return Ok(res);
         }
 
@@ -47,8 +47,8 @@ namespace QLBG.WEB.Controllers
         [HttpDelete("{id}")]
         public IActionResult deleteCategory([FromRoute] int id)
         {
-            var res = categorySvc.Delete(id);
-            return Ok(res);
+            categorySvc.Delete(id);
+            return NoContent();
         }
 
         // api/Categories/all

@@ -22,7 +22,6 @@ namespace QLBG.DAL
         {
             var m = base.All.First(i => i.Id == id);
             m = base.Delete(m);
-            base.Context.SaveChanges();
             return m.Id;
         }
 

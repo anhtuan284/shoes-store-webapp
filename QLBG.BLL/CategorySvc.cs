@@ -1,4 +1,5 @@
 ﻿using QLBG.Common.BLL;
+using QLBG.Common.Req;
 using QLBG.Common.Rsp;
 using QLBG.DAL;
 using QLBG.DAL.Models;
@@ -32,19 +33,21 @@ namespace QLBG.BLL
         }
 
 
-        public override SingleRsp Update(Category m)
+        public SingleRsp Update(int id, CategoryReq req)
         {
             var res = new SingleRsp();
+            var cat = _rep.Read(id);
 
-            var m1 = m.Id > 0 ? _rep.Read(m.Id) : _rep.Read(m.Description);
-            if (m1 == null)
+            cat.Name = req.Name;
+            cat.Description = req.Description;
+
+            if (cat == null)
             {
-                res.SetError("EZ103", "No category.");
+                res.SetError("Error!", "No category.");
             }
             else
             {
-                res = base.Update(m);
-                res.Data = m;
+                res = base.Update(cat);
             }
 
             return res;

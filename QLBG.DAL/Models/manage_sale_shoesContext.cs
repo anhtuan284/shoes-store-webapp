@@ -67,9 +67,7 @@ namespace QLBG.DAL.Models
 
                 entity.Property(e => e.Comment1)
                     .IsRequired()
-                    .HasMaxLength(10)
-                    .HasColumnName("comment")
-                    .IsFixedLength(true);
+                    .HasColumnName("comment");
 
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
