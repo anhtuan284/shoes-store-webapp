@@ -57,6 +57,22 @@ namespace QLBG.DAL
                 return query.ToList();
             }
         }
+        public SingleRsp OrderAll()
+        {
+            using(manage_sale_shoesContext ctx = new())
+            {
+                var res = new SingleRsp();
+                var query = ctx.Orders.AsQueryable().Include(e => e.OrderDetails)
+                                                        .ThenInclude(s => s.ShoeDetail)
+                                                            .ThenInclude(s => s.Shoe)
+                                                    .Include(o => o.OrderDetails)
+                                                        .ThenInclude(od => od.ShoeDetail)
+                                                            .ThenInclude(sd => sd.Size)
+                                                    .Include(c => c.Customer);
+                res.SetData("200",query.ToList());                               
+                return res;
+            }
+        }
         public SingleRsp Update(int orderID)
         {
             using(manage_sale_shoesContext context = new())

@@ -15,12 +15,32 @@ namespace QLBG.DAL
 {
     public class ShoeRep : GenericRep<manage_sale_shoesContext, Shoe>
     {
-        public override Shoe Read(int id)
+        public  SingleRsp Readinfo(int id)
         {
-            //var m = base.All.First(x => x.Id == id);
-            var m = base.All.AsQueryable().Where(x => x.Id == id).Include(x => x.ShoeDetails)
-                .ThenInclude(d => d.Size).First();
-            return m;
+            using (var ctx = new manage_sale_shoesContext())
+            {
+                var res = new SingleRsp();
+                var m = ctx.Shoes.AsQueryable().Join(ctx.ShoeDetails,
+                                                     shoe => shoe.Id,
+                                                     shoeDetails => shoeDetails.ShoeId,
+                                                     (shoe, shoeDetails) => new { Shoe = shoe, ShoeDetails = shoeDetails })
+                                                .Join(ctx.OrderDetails,
+                                                      joined => joined.ShoeDetails.Id,
+                                                      orderDetail => orderDetail.ShoeDetailId,
+                                                      (joined, orderDetail) => new { joined.ShoeDetails, joined.Shoe, OrderDetail = orderDetail })
+                                                .Join(ctx.Comments,
+                                                      joined => joined.OrderDetail.Id,
+                                                      comment => comment.Id,
+                                                      (joined, comment) => new { joined.ShoeDetails, joined.Shoe, joined.OrderDetail, Comment = comment })
+                                                .GroupBy(s=> new { s.Shoe.Id,s.Shoe.Name,s.Shoe.Price,s.Shoe.Image } )
+                                                .Select(s => new
+                                                {
+                                                    Shoe = s.Key,
+                                                    Rate = s.Average(s=>s.Comment.Rate)
+                                                }).Where(s=>s.Shoe.Id == id).First();
+                res.SetData("200",m);
+                return res;
+            }
         }
 
         //Add new Shoes with CategoryId

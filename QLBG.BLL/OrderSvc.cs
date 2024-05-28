@@ -43,5 +43,9 @@ namespace QLBG.BLL
         {
             return orderRep.Update(orderid);
         }
+        public SingleRsp AllOrder()
+        {
+            return orderRep.OrderAll();
+        }
     }
 }

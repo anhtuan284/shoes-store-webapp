@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -26,10 +27,10 @@ namespace QLBG.WEB.Controllers
         ShoeSvc shoeSvc = new ShoeSvc();
 
         [HttpPost("create"), Authorize(Roles = "admin")]
-        [Consumes("multipart/form-data")]
         public IActionResult CreateShoe([FromForm] ShoeReq shoeReq)
         {
             var res = new SingleRsp();
+            
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(shoeReq.Img.FileName, shoeReq.Img.OpenReadStream()),

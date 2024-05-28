@@ -55,5 +55,13 @@ namespace QLBG.WEB.Controllers
             res = orderSvc.Update(id);
             return res.Success ? Ok(res) : BadRequest(res);
         }
+
+        [HttpGet("all"), Authorize(Roles = "admin")]
+        public IActionResult All()
+        {
+            var res = new SingleRsp();
+            res = orderSvc.AllOrder();
+            return res.Success ? Ok(res) : BadRequest(res);
+        }
     }
 }

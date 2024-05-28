@@ -21,13 +21,13 @@ namespace QLBG.BLL
             var res = new SingleRsp();
             try
             {
-                var m = _rep.Read(id);
-                res.Data = m;
+                res = shoeRep.Readinfo(id);
+                
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                res.SetError("400", "Bad request");
+                res.SetError("400", ex.Message);
             }
 
             return res;

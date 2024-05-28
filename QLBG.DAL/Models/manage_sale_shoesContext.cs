@@ -173,9 +173,7 @@ namespace QLBG.DAL.Models
 
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
 
-                entity.Property(e => e.Image)
-                    .HasMaxLength(100)
-                    .HasColumnName("image");
+                entity.Property(e => e.Image).HasColumnName("image");
 
                 entity.Property(e => e.Name)
                     .IsRequired()

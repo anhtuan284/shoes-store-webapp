@@ -25,5 +25,14 @@ namespace QLBG.WEB.Controllers
             res = sizeSvc.Create(c);
             return Created("200", res);
         }
+        [HttpGet("all")]
+        public IActionResult AllSize()
+        {
+            var res = new SingleRsp();
+            res.Data = sizeSvc.All;
+
+            return Ok(res);
+
+        }
     }
 }
