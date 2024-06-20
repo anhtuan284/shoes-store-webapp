@@ -15,7 +15,6 @@ namespace QLBG.BLL
     {
         #region -- Overrides --
 
-
         public override SingleRsp Read(int id)
         {
             var res = new SingleRsp();
